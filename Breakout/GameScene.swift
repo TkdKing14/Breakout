@@ -20,16 +20,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var score = 0
     var lives = 3
     var removedBricks = 0
-    private var label : SKLabelNode?
-    private var spinnyNode : SKShapeNode?
-    
+    func resetGame() {
+        // this stuff happens before each game starts
+        makeBall ()
+        makePaddle()
+        makeBricks()
+        updateLabels()
+    }
     override func didMove(to view: SKView) {
         physicsWorld.contactDelegate = self
         self.physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
         createBackground()
         resetGame()
-        makePaddle()
-        makeBricks()
         makeLoseZone()
         makeLabels()
     }
@@ -67,6 +69,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if contact.bodyA.node == brick ||
                 contact.bodyB.node == brick {
                 score += 1
+                // increase ball velocity by 2%
+                ball.physicsBody!.velocity.dx *= CGFloat (1.02)
+                ball.physicsBody!.velocity.dy *= CGFloat(1.02)
                 updateLabels()
                 if brick.color == .blue {
                     brick.color = .orange // blue bricks turn orange
@@ -87,8 +92,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             contact.bodyB.node?.name == "loseZone" {
             lives -= 1
             if lives > 0 {
-                score = 0
-                resetGame ()
+                makeBall ()
+                makePaddle()
+                updateLabels()
+                
                 kickBall()
             }
             else {
@@ -127,14 +134,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         ball.physicsBody?.contactTestBitMask = (ball.physicsBody?.collisionBitMask)!
         addChild(ball)
     }
-    func resetGame() {
-        // this stuff happens before each game starts
-        makeBall ()
-        updateLabels()
-    }
     func kickBall () {
         ball.physicsBody?.isDynamic = true
-        ball.physicsBody?.applyImpulse(CGVector(dx: 3, dy: 5))
+        ball.physicsBody?.applyImpulse(CGVector(dx: Int.random(in: -5...5), dy: 5))
     }
     func updateLabels () {
         scoreLabel.text = "Score: \(score)"
@@ -156,7 +158,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         brick.physicsBody = SKPhysicsBody(rectangleOf: brick.size)
         brick.physicsBody?.isDynamic = false
         addChild(brick)
-        bricks.append (brick)
+        bricks.append(brick)
         
     }
     func makeLoseZone () {
