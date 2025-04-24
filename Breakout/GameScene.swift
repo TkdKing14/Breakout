@@ -15,14 +15,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var loseZone = SKSpriteNode()
     var playLabel = SKLabelNode()
     var livesLabel = SKLabelNode()
-    var scoreLabel = SKLabelNode ()
+    var scoreLabel = SKLabelNode()
     var playingGame = false
     var score = 0
     var lives = 3
     var removedBricks = 0
+    
     func resetGame() {
         // this stuff happens before each game starts
-        makeBall ()
+        makeBall()
         makePaddle()
         makeBricks()
         updateLabels()
@@ -92,7 +93,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             contact.bodyB.node?.name == "loseZone" {
             lives -= 1
             if lives > 0 {
-                makeBall ()
+                makeBall()
                 makePaddle()
                 updateLabels()
                 
@@ -117,7 +118,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             starsBackground.run(moveForever)
         }
     }
-    func makeBall () {
+    func makeBall() {
         ball.removeFromParent ()
         ball = SKShapeNode(circleOfRadius: 10)
         ball.position = CGPoint(x: frame.midX, y: frame.midY)
@@ -134,18 +135,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         ball.physicsBody?.contactTestBitMask = (ball.physicsBody?.collisionBitMask)!
         addChild(ball)
     }
-    func kickBall () {
+    func kickBall() {
         ball.physicsBody?.isDynamic = true
         ball.physicsBody?.applyImpulse(CGVector(dx: Int.random(in: -5...5), dy: 5))
     }
-    func updateLabels () {
+    func updateLabels() {
         scoreLabel.text = "Score: \(score)"
         livesLabel.text = "Lives: \(lives)"
     }
     func makePaddle() {
-        paddle.removeFromParent ()
+        paddle.removeFromParent()
         // remove the paddle, if it exists
-        paddle = SKSpriteNode(color: .white, size: CGSize(width: frame.width/4, height: 20))
+        paddle = SKSpriteNode(color: .white, size: CGSize(width: frame.width/4, height: 15))
         paddle.position = CGPoint(x: frame.midX, y: frame.minY + 125)
         paddle.name = "paddle"
         paddle.physicsBody = SKPhysicsBody(rectangleOf: paddle.size)
@@ -159,7 +160,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         brick.physicsBody?.isDynamic = false
         addChild(brick)
         bricks.append(brick)
-        
     }
     func makeLoseZone () {
         loseZone = SKSpriteNode(color: .red, size: CGSize(width: frame.width, height: 50))
@@ -202,7 +202,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // first, remove any leftover bricks (from prior game)
         for brick in bricks {
             if brick.parent != nil {
-                brick.removeFromParent ()
+                brick.removeFromParent()
             }
         }
         bricks.removeAll() // clear the array
